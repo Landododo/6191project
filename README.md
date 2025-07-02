@@ -1,14 +1,136 @@
-Full-bypassing 4 stage processor divided into fetch, decode, execute, and writeback stages. 
-ALU.ms: ALU description. Uses a recursive adder to add left half then right half and then add the 2 togther to be more efficient (though taking up more area).
-CacheHelpers.ms: Does basic functions to get the bits used for certain RISC-V instructions like Sw and Sh and Sb....
-CacheTypes.ms: Describes some request structures and some dictionaries to describe some status bits
-Decode.ms: Extracts the different elements of an instruction (opcode, funct3,funct7, dst, src1,src2) and returns a decoded instruction type (DecodedInst) according to these values.
-DirectMappedCache.ms: A direct-mapped cache implementation that sends instructions to the cache (defined in MainMemory.ms) and waits and updates cache according to instructions, handling hits, clean misses, and dirty misses.
-Execute.ms: Takes in a decoded instruction and dest and source registers, and executes the instruction in the ALU. Also updates the nextPc according to the instruction. Finally returns an ExecInst which stores the nextPc and data resulting from executing the instruction.
-MainMemory.ms: Not coded by me. Emulates DRAM technology and ensures data is properly stored and aligned. Also produces errors if multiple requests are made in 1 cycle. 
-ProcTypes.ms: Specifies instruction actions as their instruction name instead of the bits representing it (like fnAdd instead of 3'b000). Also defines IType, DecodedInst, and BrFunc.
-Processor.ms: Actual processor implementation. Pipelined into 4 stages: Fetch, decode, execute, and writeback. Fetch uses a direct mapped cache for instructions, issuing a request to the cache and updating the pc according to its input (fetch action along with redirect pc if it applies). Decode stage initiates a stall if necessary, otherwise attempts to bypass data from execute and writeback. Then just calls the decode function as outlined in Decode.ms. Also sets the fetch action to be executed and redirectPC if necessary. The execute stage executes the instruction according to the function described in Execute.ms, then issues write/load instructions to the data cache which is implemented as a 2-way set associative cache. Finally, the writeback stage writes back to the register files according to the result of the execute stage.
-Annul (always predicts PC+4 and annuls if this isnt the case) and stall logic are also implemented throughout the processor with bypassing from execute and writeback to decode.
-RegisterFile.ms: Not coded by me. Emulates registers ticking.
-SRAM.ms: Not coded by me. Emulates SRAM which is used to implement main memory.
-TwoWayCache.ms: Two way set associative cache that is used by the data cache of the processor. Handles hits, clean misses, and dirty misses and updates the cache accordingly. Uses lru eviction. 
+---
+
+# 🧠 Full-Bypassing 4-Stage Pipelined RISC-V Processor
+
+A Bluespec SystemVerilog (BSV) implementation of a 4-stage RISC-V processor, with full bypassing and separate instruction/data caches. The pipeline is divided into:
+
+* **Fetch**
+* **Decode**
+* **Execute**
+* **Writeback**
+
+### 🔧 Features
+
+* Full data bypassing from Execute and Writeback to Decode
+* PC+4 prediction with annul logic on mispredictions
+* Instruction cache (Direct-Mapped)
+* Data cache (Two-Way Set Associative)
+* Stall logic for hazard and memory delays
+
+---
+
+## 📁 Module Descriptions
+
+<details>
+<summary><strong><code>ALU.ms</code></strong></summary>
+
+Implements the ALU. Uses a recursive adder that adds the left half and right half separately, then combines them — improving timing at the cost of more area.
+
+</details>
+
+<details>
+<summary><strong><code>CacheHelpers.ms</code></strong></summary>
+
+Provides helper functions to extract specific fields (like offsets, tags) used in RISC-V store instructions (`SW`, `SH`, `SB`, etc.).
+
+</details>
+
+<details>
+<summary><strong><code>CacheTypes.ms</code></strong></summary>
+
+Defines data structures used for cache communication (e.g., `MemReq`, `MemData`, and status dictionaries).
+
+</details>
+
+<details>
+<summary><strong><code>Decode.ms</code></strong></summary>
+
+Decodes raw instructions into the `DecodedInst` type. Extracts opcode, `funct3`, `funct7`, `rd`, `rs1`, and `rs2`.
+
+</details>
+
+<details>
+<summary><strong><code>DirectMappedCache.ms</code></strong></summary>
+
+Implements a direct-mapped instruction cache. Handles:
+
+* Hits
+* Clean misses
+* Dirty misses
+  Interacts with `MainMemory.ms`.
+
+</details>
+
+<details>
+<summary><strong><code>Execute.ms</code></strong></summary>
+
+Receives a `DecodedInst` and operands. Executes it using the ALU and determines the next PC. Returns an `ExecInst` with result and next PC.
+
+</details>
+
+<details>
+<summary><strong><code>MainMemory.ms</code></strong> (Not written by me)</summary>
+
+Simulates DRAM with line-based access. Ensures memory alignment and enforces single request per cycle. Useful for cache miss emulation.
+
+</details>
+
+<details>
+<summary><strong><code>ProcTypes.ms</code></strong></summary>
+
+Defines key processor types and enums:
+
+* Instruction types (`IType`)
+* Decoded instruction (`DecodedInst`)
+* Branch function (`BrFunc`)
+* Aliases for functions like `fnAdd` instead of using raw bits
+
+</details>
+
+<details>
+<summary><strong><code>Processor.ms</code></strong></summary>
+
+Top-level pipelined processor implementation.
+
+* **Fetch**: Uses a direct-mapped instruction cache and PC+4 prediction with redirect support.
+* **Decode**: Implements hazard detection and full bypassing from Execute and Writeback. Decodes instructions and drives fetch control.
+* **Execute**: Runs instructions through ALU, calculates next PC, and issues memory requests for loads/stores.
+* **Writeback**: Writes results back to register file. Load data is received here.
+
+Includes logic for:
+
+* Annulment (misprediction recovery)
+* Load/store stalls
+* Forwarding logic
+* Instruction counting and debugging
+
+</details>
+
+<details>
+<summary><strong><code>RegisterFile.ms</code></strong> (Not written by me)</summary>
+
+Implements register read/write logic with appropriate synchronous ticking.
+
+</details>
+
+<details>
+<summary><strong><code>SRAM.ms</code></strong> (Not written by me)</summary>
+
+Simulates SRAM behavior used internally by `MainMemory.ms`.
+
+</details>
+
+<details>
+<summary><strong><code>TwoWayCache.ms</code></strong></summary>
+
+Two-way set associative data cache with LRU eviction. Handles:
+
+* Hits
+* Clean misses
+* Dirty misses
+
+Used by the data memory system of the processor.
+
+</details>
+
+---
