@@ -1,7 +1,7 @@
 
 ---
 
-# 🧠 Full-Bypassing 4-Stage Pipelined RISC-V Processor
+# Full-Bypassing 4-Stage Pipelined RISC-V Processor
 
 A Bluespec SystemVerilog (BSV) implementation of a 4-stage RISC-V processor, with full bypassing and separate instruction/data caches. The pipeline is divided into:
 
