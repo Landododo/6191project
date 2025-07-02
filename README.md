@@ -1,4 +1,3 @@
-Here's a clean and readable version of your description, formatted for a GitHub README using proper Markdown syntax and code formatting:
 
 ---
 
@@ -137,4 +136,3 @@ Used by the data memory system of the processor.
 
 ---
 
-Let me know if you'd like a diagram or pipeline visualization to add to the README!
