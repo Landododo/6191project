@@ -1,3 +1,5 @@
+Here's a clean and readable version of your description, formatted for a GitHub README using proper Markdown syntax and code formatting:
+
 ---
 
 # 🧠 Full-Bypassing 4-Stage Pipelined RISC-V Processor
@@ -134,3 +136,5 @@ Used by the data memory system of the processor.
 </details>
 
 ---
+
+Let me know if you'd like a diagram or pipeline visualization to add to the README!
