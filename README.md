@@ -133,6 +133,22 @@ Two-way set associative data cache with LRU eviction. Handles:
 Used by the data memory system of the processor.
 
 </details>
+## 🚀 Later Modifications
+
+This project was later modified to be optimized for machine-learning applications.  
+This optimization was done through the implementation of a custom `packmul` instruction that multiplies four 8-bit numbers and adds them together. The instruction is pipelined such that multiplication occurs in the **Execute** stage, and the summation completes in the **Writeback** stage before writing to the register file.
+
+Additional optimizations:
+- Removal of unnecessary instructions
+- Inlining performance-critical functions
+- Loop unrolling
+- Compiler optimization flags
+
+🔮 **Potential future optimizations** (not implemented):
+- Adjusting cache geometry for task-specific memory patterns
+- Specializing the iCache (e.g., for load-only behavior)
+- Implementing tailored software multiplication instead of default 64-bit multiplication logic
+
 ## Later Modifications
 This project was later modified to be optimized for machine-learning applications. This optimization was done through the implementation of a custom packmul instruction that would multiple 4 8 bit numbers
 and then add them together, which was pipelined to execute the multiplication in the execute stage and add them together in the writeback stage before writing to the register file. The processor was also optimized by removing unneccesary instructions, inlining functions, loop unrolling, and compiler optimization settings. Several potential future optimizations (not implemented) would be potentially changing cache geometry to best fit the task, specializing the iCache (only loads are issued to it), and to use tailored software multiplication instead of using the default 64 bit multiplication operand implementation.
